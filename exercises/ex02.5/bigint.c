@@ -33,8 +33,13 @@ s: string
 returns: string
 */
 char *reverse_string(char *s) {
-    //TODO: Fill this in.
-    return "";
+    int len = strlen(s); //find string length
+    int i;
+    char* ret = malloc((len + 1)); //allocate space for the characters
+    for(i = 0; i < len; i++){ //walk through s setting the opposite point in ret
+      ret[i] = s[len-i-1];
+    }
+    return ret;
 }
 
 /* ctoi: Converts a character to integer.
@@ -53,8 +58,10 @@ i: integer 0 to 9
 returns: character '0' to '9'
 */
 char itoc(int i) {
-    //TODO: Fill this in, with an appropriate assertion.
-    return '0';
+  assert(i>=0 && i <= 9);//check for the correct range
+  char str[1]; //get space for number
+  sprintf(str, "%i", i); //fill that space
+  return str[0];
 }
 
 /* add_digits: Adds two decimal digits, returns the total and carry.
@@ -70,7 +77,10 @@ carry: pointer to char
 
 */
 void add_digits(char a, char b, char c, char *total, char *carry) {
-    //TODO: Fill this in.
+    int tot = ctoi(a) + ctoi(b) + ctoi(c); //Get total as integer
+    total[0] = itoc(tot%10); //Get ones place as char
+    carry[0] = itoc(tot/10); //Get tens place as char
+
 }
 
 /* Define a type to represent a BigInt.
@@ -184,12 +194,12 @@ void test_add_bigint() {
     char *t = "99999999999999999999999999999999999999999999";
     char *res = "000000000000000000000000000000000000000000001";
 
-    BigInt big1 = make_bigint(s);    
+    BigInt big1 = make_bigint(s);
     BigInt big2 = make_bigint(t);
     BigInt big3 = malloc(100);
 
 	add_bigint(big1, big2, '0', big3);
-    
+
     if (strcmp(big3, res) == 0) {
         printf("add_bigint passed\n");
     } else {
@@ -205,6 +215,6 @@ int main (int argc, char *argv[])
 
     //TODO: When you have the first three functions working,
     //      uncomment the following, and it should work.
-    // test_add_bigint();
+    test_add_bigint();
     return 0;
 }
