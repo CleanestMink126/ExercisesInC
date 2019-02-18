@@ -16,7 +16,9 @@ This should populate an array with all 42s and then print them
 int *foo() {
     int i;
     int array[SIZE];
+
     printf("%p\n", array);
+
     for (i=0; i<SIZE; i++) {
         array[i] = 42;
     }
