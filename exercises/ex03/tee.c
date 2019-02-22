@@ -15,7 +15,7 @@ int main(int argc, char *argv[]){
     argv += optind;
   }
   //Declare Files
-  //Return if
+  //Return if we can't open a file
   FILE* files[argc];
   for (int count = 0; count < argc; count++){
     files[count] = fopen(argv[count], action);
