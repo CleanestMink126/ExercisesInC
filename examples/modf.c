@@ -78,7 +78,6 @@ double* get_both_parts(double* array, int len, double** p){
   return n;
 }
 
-
 void test_get_both_parts()
 {
     double array[] = {1.2, 2.718, 3.14159, 5.6};

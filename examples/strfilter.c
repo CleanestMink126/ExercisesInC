@@ -8,7 +8,8 @@ char *strfilter1(char *string, char *letters) {
 
     // TODO: hoist strlen out of the loop!
     // See "Accidentally quadratic"
-    for (int i=0; i<strlen(string); i++) {
+    int max = strlen(string);
+    for (int i=0; i<max; i++) {
         char *ptr = strchr(letters, string[i]);
         if (ptr) {
             buffer[j++] = string[i];
@@ -37,7 +38,7 @@ char *strfilter2(char *string, char *letters) {
 
 char *strfilter3(char *string, char *letters) {
     int length = strlen(string);
-    char buffer[length];
+    char *buffer = malloc(length);
     int j = 0;
 
     for (int i=0; i<length; i++) {
@@ -60,6 +61,7 @@ char *strfilter4(char *string, char *letters) {
         }
     }
     int length = sizeof(buffer);
+    printf("%i\n",length)
     char *res = (char *) malloc (length * sizeof(char));
     strcpy(buffer, res);
     return res;
@@ -70,16 +72,16 @@ int main() {
     char letters[] = "aeiou";
 
     char *filtered = strfilter1(string, letters);
-    printf("%s\n", filtered);
+    printf("1%s\n", filtered);
 
     char *filtered2 = strfilter2(string, letters);
-    printf("%s\n", filtered2);
+    printf("2%s\n", filtered2);
 
     char *filtered3 = strfilter3(string, letters);
-    printf("%s\n", filtered3);
+    printf("3%s\n", filtered3);
 
     char *filtered4 = strfilter4(string, letters);
-    printf("%s\n", filtered4);
+    printf("4%s\n", filtered4);
 
     return 0;
 }
