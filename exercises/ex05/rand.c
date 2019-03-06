@@ -5,6 +5,8 @@ License: MIT License https://opensource.org/licenses/MIT
 */
 
 #include <stdlib.h>
+#include <stdint.h>
+#include <stdio.h>
 
 // generate a random float using the algorithm described
 // at http://allendowney.com/research/rand
@@ -55,7 +57,7 @@ float my_random_float2()
     // generate random bits until we see the first set bit
     while (1) {
         x = random();
-        if (x == 0) {
+        if (x == 0){
             exp -= 31;
         } else {
             break;
@@ -78,8 +80,44 @@ float my_random_float2()
 // compute a random double using my algorithm
 double my_random_double()
 {
-    // TODO: fill this in
-}
+    //I basically copied Allen's code and modified it to support doubles
+    long long int x; //Everything should be long long
+    long long int holder;
+    long long int mant;
+    long long int exp = 1022; //Set the exponent to have a max of 1
+    long long int mask = 1;
+
+    union {
+        double d;
+        long long int i;
+    } b;
+
+    // generate random bits until we see the first set bit
+    while (1) {
+        holder  = random();
+        x  = random();
+        x = x | (holder<<32);//Bit shift to fully cover the double (random
+        //returns 32 bits)
+        if (x == 0){
+            exp -= 31; //Tbh I don't know what this line is supposed to do. It's
+            //almost impossible to occur.
+        } else {
+            break;
+        }
+    }
+
+    // find the location of the first set bit and compute the exponent
+    while (x & mask) {
+        mask <<= 1;
+        exp--;
+    }
+
+    // use the remaining bit as the mantissa
+    mant = x >> 11;
+    b.i = (exp << 52) | mant;
+
+    return b.d;
+  }
 
 // return a constant (this is a dummy function for time trials)
 float dummy()
