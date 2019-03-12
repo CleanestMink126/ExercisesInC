@@ -52,8 +52,24 @@ double time_func(int iters, float(*func)())
     return t1 - t0;
 }
 
+double time_func_d(int iters, double(*func)())
+{
+    int i;
+    double f;
+    double t0, t1;
 
-main(int argc, char *argv[])
+    srandom(time(NULL));
+
+    t0 = get_seconds();
+    for (i=0; i<iters; i++) {
+        f = func();
+    }
+    t1 = get_seconds();
+    return t1 - t0;
+}
+
+
+int main(int argc, char *argv[])
 {
     double time;
     int iters = 100000000;
@@ -65,7 +81,7 @@ main(int argc, char *argv[])
     time = time_func(iters, dummy2);
     printf("%f ms \t dummy2\n", time);
 
-    time = time_func(iters, random_float);
+    time = time_func(iters, random_float);//Random float is the fastest
     printf("%f ms \t random_float\n", time);
 
     time = time_func(iters, my_random_float);
@@ -76,4 +92,11 @@ main(int argc, char *argv[])
 
     time = time_func(iters, random_float);
     printf("%f ms \t random_float\n", time);
+
+    time = time_func(iters, random_double);//Random double is much faster 1.7s
+    printf("%lf ms \t random_double\n", time);
+
+    time = time_func_d(iters, my_random_double);//3.7s
+    printf("%lf ms \t my_random_double\n", time);
+    return 0;
 }
