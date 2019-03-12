@@ -54,8 +54,16 @@ void print_list(Node **list) {
 * returns: int or -1 if the list is empty
 */
 int pop(Node **list) {
-    // FILL THIS IN!
-    return 0;
+    //#ThatDSALife
+    Node* n = *list;
+    if(n == NULL){//return -1 if empty
+      return -1;
+    }
+    *list = n -> next;//Reset head
+    int val = n -> val;
+    free(n);
+    return val;
+
 }
 
 
@@ -65,7 +73,9 @@ int pop(Node **list) {
 * val: value to add
 */
 void push(Node **list, int val) {
-    // FILL THIS IN!
+    //make node and reset head
+    Node* n = make_node(val, (*list));
+    *list = n;
 }
 
 
@@ -79,7 +89,24 @@ void push(Node **list, int val) {
 * returns: number of nodes removed
 */
 int remove_by_value(Node **list, int val) {
-    // FILL THIS IN!
+    //We run through the list checking for value
+    //If we find it we redo the previous pointer or maybe reset Head
+    //We also have to free the node
+    Node* n = (*list);
+    Node* prev = NULL;
+    while(n != NULL){
+      if(n -> val == val){
+        if (prev == NULL){
+          (*list) = n -> next;
+        }else{
+          prev -> next = n->next;
+        }
+        free(n);
+        return 1;
+      }
+      prev = n;
+      n = n -> next;
+    }
     return 0;
 }
 
@@ -91,7 +118,18 @@ int remove_by_value(Node **list, int val) {
 * list: pointer to pointer to Node
 */
 void reverse(Node **list) {
-    // FILL THIS IN!
+    //Legit remember this question from one of the DSA PSETs
+    Node* prev = NULL;
+    Node* curr = (*list);
+    Node* next = curr -> next;
+    while(next != NULL){
+      curr -> next = prev;
+      prev = curr;
+      curr = next;
+      next = next -> next;
+    }
+    curr -> next = prev;
+    (*list) = curr;
 }
 
 
