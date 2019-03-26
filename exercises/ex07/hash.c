@@ -133,7 +133,10 @@ void print_hashable(Hashable *hashable)
 */
 int hash_int(void *p)
 {
-    return *(int *)p;
+    //Literally just takes the int...
+    //I changed it to just reference the virtual memory address
+    //Which isn't that much better
+    return (int) p;
 }
 
 
@@ -145,6 +148,7 @@ int hash_int(void *p)
 */
 int hash_string(void *p)
 {
+    //WTF it's SILLY STRING
     char *s = (char *) p;
     int total = 0;
     int i = 0;
@@ -178,8 +182,8 @@ int hash_hashable(Hashable *hashable)
 */
 int equal_int (void *ip, void *jp)
 {
-    // FILL THIS IN!
-    return 0;
+    //Cast then dereference
+    return *((int*) ip) == *((int*) jp);
 }
 
 
@@ -192,8 +196,9 @@ int equal_int (void *ip, void *jp)
 */
 int equal_string (void *s1, void *s2)
 {
-    // FILL THIS IN!
-    return 0;
+    //Casting is nice
+    //Inbuilt functions are nice
+    return strcmp((char*)s1, (char*)s2) == 0;
 }
 
 
@@ -207,8 +212,7 @@ int equal_string (void *s1, void *s2)
 */
 int equal_hashable(Hashable *h1, Hashable *h2)
 {
-    // FILL THIS IN!
-    return 0;
+    return h1->equal(h1,h2);
 }
 
 
@@ -296,8 +300,17 @@ Node *prepend(Hashable *key, Value *value, Node *rest)
 /* Looks up a key and returns the corresponding value, or NULL */
 Value *list_lookup(Node *list, Hashable *key)
 {
-    // FILL THIS IN!
-    return NULL;
+    //Made it recursive because why not
+    if(list == NULL){
+      //Base case
+      return NULL;
+    }
+    if(equal_hashable(key, list->key)){
+      //Found key
+      return list->value;
+    }
+    //Recursive case
+    return list_lookup(list->next, key);
 }
 
 
@@ -341,15 +354,26 @@ void print_map(Map *map)
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-    // FILL THIS IN!
+    //Basically DSA
+    //Get the hask and find the right bucket
+    int hash = hash_hashable(key);
+    int bucket = hash%map->n;
+    //Get the head of the list
+    Node* prev_head = map->lists[bucket];
+    //Push new node to the head of the list
+    Node* new_node = make_node(key, value, prev_head);
+    //Adjust map
+    map->lists[bucket] = new_node;
 }
 
 
 /* Looks up a key and returns the corresponding value, or NULL. */
 Value *map_lookup(Map *map, Hashable *key)
 {
-    // FILL THIS IN!
-    return NULL;
+    //Get bucket in the same way and find value
+    int hash = hash_hashable(key);
+    int bucket = hash%map->n;
+    return list_lookup(map->lists[bucket], key);
 }
 
 

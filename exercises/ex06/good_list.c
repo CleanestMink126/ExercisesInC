@@ -46,6 +46,18 @@ void print_list(Node **list) {
     printf("]\n");
 }
 
+int swap(Node **list){
+  Node* head = *list;
+  if(head == NULL || head->next == NULL){
+    return -1;
+  }
+  Node* n_head = head->next;
+  head->next = n_head->next;
+  n_head->next = head;
+  *list = n_head;
+  return 0;
+}
+
 
 int main() {
     Node *head = make_node(1, NULL);
@@ -55,4 +67,14 @@ int main() {
 
     Node **list = &head;
     print_list(list);
+    
+    swap(list);
+    print_list(list);
+    (*list)->next = NULL;
+    int r = swap(list);
+    printf("%i\n",r);
+    (*list) = NULL;
+    r = swap(list);
+    printf("%i\n",r);
+
 }
