@@ -38,14 +38,38 @@ int main(int argc, char *argv[])
     int num_feeds = 5;
     char *search_phrase = argv[1];
     char var[255];
+    int pid;
+    int status;
 
     for (int i=0; i<num_feeds; i++) {
         sprintf(var, "RSS_FEED=%s", feeds[i]);
         char *vars[] = {var, NULL};
+        pid = fork();
+        if(pid == 0){//If we are the child process
+          //This next line calls the python script, which, when ended, will also
+          //end this script so we needed to create a new process.
+          int res = execle(PYTHON, PYTHON, SCRIPT, search_phrase, NULL, vars);
+          if (res == -1) {
+              error("Can't run script.");
+          }
+        }
 
-        int res = execle(PYTHON, PYTHON, SCRIPT, search_phrase, NULL, vars);
-        if (res == -1) {
-            error("Can't run script.");
+    }
+    //Copied this for loop from fork.c
+    //Checks for errors
+    for (int i=0; i<num_feeds; i++) {
+        pid = wait(&status);
+
+        if (pid == -1) {
+            fprintf(stderr, "wait failed: %s\n", strerror(errno));
+            perror(argv[0]);
+            exit(1);
+        }
+
+        // check the exit status of the child
+        status = WEXITSTATUS(status);
+        if(status != 0){
+          printf("BIG OOF: Child %d exited with error code %d.\n", pid, status);
         }
     }
     return 0;
