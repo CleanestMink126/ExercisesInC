@@ -9,7 +9,10 @@ License: GNU GPLv3
 #include <stdlib.h>
 #include <pthread.h>
 
-#define NUM_CHILDREN 5
+//Syncronization erros occur in this script due to the order that threads execute values. If one increments the value between the print statement and incrementer, not all numbers will be represented. Also the incrementor can be split by another thread between loading and incrementing the value. So the final value may not be accurate.
+
+
+#define NUM_CHILDREN 10000
 
 /* Print an error message and exit.
 */
