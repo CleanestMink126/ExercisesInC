@@ -11,6 +11,8 @@ License: GNU GPLv3
 
 #define NUM_CHILDREN 2
 
+//Many syncronization errors occur int this script. Since nothing enforces syncronization of the threads, the counter will get all out of whack for the same reasons as counter.c
+
 void perror_exit(char *s)
 {
     perror(s);

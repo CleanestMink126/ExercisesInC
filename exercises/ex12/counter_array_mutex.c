@@ -11,7 +11,22 @@ License: GNU GPLv3
 #include "mutex.h"
 
 #define NUM_CHILDREN 2
+Mutex* m;
 
+//Many syncronization errors occur int this script. Since nothing enforces syncronization of the threads, the counter will get all out of whack for the same reasons as counter.c
+//With the mutex, they increment one at a time so there are no errors
+//With mutexes the total time running was about doubled, which comes from the system time going up by an order of magnitude
+/*
+real	0m0.096s
+user	0m0.104s
+sys	0m0.017s
+*/
+
+/*
+real	0m0.211s
+user	0m0.209s
+sys	0m0.140s
+*/
 void perror_exit(char *s)
 {
     perror(s);
@@ -31,7 +46,6 @@ typedef struct {
     int counter;
     int end;
     int *array;
-    Mutex *mutex;
 } Shared;
 
 Shared *make_shared(int end)
@@ -46,8 +60,6 @@ Shared *make_shared(int end)
     for (i=0; i<shared->end; i++) {
         shared->array[i] = 0;
     }
-
-    shared->mutex = make_mutex();
     return shared;
 }
 
@@ -75,20 +87,23 @@ void child_code(Shared *shared)
 {
     printf("Starting child at counter %d\n", shared->counter);
 
+
     while (1) {
-        mutex_lock(shared->mutex);
+        //Make sure we know we're the only ones modifying the shared
+        mutex_lock(m);
         if (shared->counter >= shared->end) {
-            mutex_unlock(shared->mutex);
-            return;
+          mutex_unlock(m); //release before exit
+          return;
         }
 
         shared->array[shared->counter]++;
         shared->counter++;
 
+
         if (shared->counter % 10000 == 0) {
             printf("%d\n", shared->counter);
         }
-        mutex_unlock(shared->mutex);
+        mutex_unlock(m);//give other people a chance
     }
 }
 
@@ -118,6 +133,7 @@ int main()
     pthread_t child[NUM_CHILDREN];
 
     Shared *shared = make_shared(1000000);
+    m = make_mutex();
 
     for (i=0; i<NUM_CHILDREN; i++) {
         child[i] = make_thread(entry, shared);
