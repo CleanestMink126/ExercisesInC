@@ -178,6 +178,18 @@ Node *make_something() {
     return node3;
 }
 
+void free_list(Node **head){
+  //Function to free list
+  //We can just use this repeatedly for this file
+  Node* curr = *head;
+  while(curr != NULL){
+    Node* next = curr->next;
+    free(curr);
+    curr = next;
+  }
+  *head = NULL;
+}
+
 
 int main() {
     // make a list of even numbers
@@ -199,15 +211,19 @@ int main() {
     print_list(&test_list);
 
     // make an empty list
+
+    free_list(&test_list);
     printf("empty\n");
     Node *empty = NULL;
 
     // add an element to the empty list
     insert_by_index(&empty, 1, 0);
     print_list(&empty);
+    free_list(&empty);
 
     Node *something = make_something();
-    free(something);
+    free_list(&something);
+    // free(something);
 
     return 0;
 }
